@@ -1,0 +1,149 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche des auteurs par nombre de livres{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        /* Style de base pour la page */
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Style pour le formulaire de recherche */
+        form {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        input[type="number"] {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 100px;
+        }
+
+        button[type="submit"] {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+
+        /* Style pour le tableau */
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 1em;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        /* Style pour le bouton de suppression */
+        .delete-button {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .delete-button button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .delete-button button:hover {
+            background-color: #c0392b;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <h1>Recherche des auteurs par nombre de livres</h1>
+
+    <form method="get" action="{{ path('authors_search_by_books') }}">
+        <label for="minBooks">Nombre minimum de livres</label>
+        <input type="number" id="minBooks" name="min" value="{{ minBooks }}" required>
+
+        <label for="maxBooks">Nombre maximum de livres</label>
+        <input type="number" id="maxBooks" name="max" value="{{ maxBooks }}" required>
+
+        <button type="submit">Rechercher</button>
+    </form>
+
+    {% if authors is not empty %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Nombre de livres</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for author in authors %}
+                    <tr>
+                        <td>{{ author.username }}</td>
+                        <td>{{ author.email }}</td>
+                        <td>{{ author.books|length }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="delete-button">
+            <form method="post" action="{{ path('authors_delete_no_books') }}">
+                <button type="submit" onclick="return confirm('Voulez-vous vraiment supprimer les auteurs sans livres ?');">
+                    Supprimer les auteurs sans livres
+                </button>
+            </form>
+        </div>
+    {% else %}
+        <p style="text-align: center;">Aucun auteur trouvé avec ce critère.</p>
+    {% endif %}
+{% endblock %}

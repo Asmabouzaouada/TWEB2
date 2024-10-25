@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Liste des livres</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            background-color: #007bff;
+            transition: background-color 0.3s;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border-radius: 8px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        td a {
+            margin-right: 10px;
+            padding: 6px 12px;
+        }
+
+        td a.edit {
+            background-color: #28a745;
+        }
+
+        td a.delete {
+            background-color: #dc3545;
+        }
+
+        td a.detail {
+            background-color: #17a2b8;
+        }
+
+        td a.edit:hover {
+            background-color: #218838;
+        }
+
+        td a.delete:hover {
+            background-color: #c82333;
+        }
+
+        td a.detail:hover {
+            background-color: #138496;
+        }
+
+        .stats {
+            text-align: center;
+            margin-top: 20px;
+            color: #555;
+        }
+
+        .stats p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+<h1>Liste des livres</h1>
+<div style="text-align: center; margin-bottom: 20px;">
+    <a href="{{ path('app_AddBook') }}">Ajouter un livre</a>
+</div>
+
+<!-- Afficher le message de succès s'il existe -->
+{% if app.session.flashBag.has('success') %}
+    <div class="alert alert-success">
+        {% for message in app.session.flashBag.get('success') %}
+            {{ message }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- Tableau des livres publiés -->
+<table>
+    <thead>
+    <tr>
+        <th>Titre</th>
+        <th>Date de publication</th>
+        <th>Publié</th>
+        <th>Catégorie</th>
+        <th>Auteur</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for b in publishedBooks %}
+        <tr>
+            <td>{{ b.title }}</td>
+            <td>{{ b.publicationDate | date('M d, Y') }}</td>
+            <td>{{ b.published ? 'Oui' : 'Non' }}</td>
+            <td>{{ b.category }}</td>
+            <td>{{ b.author.username }}</td>
+            <td>
+                <a href="{{ path('app_editBook', {'ref': b.ref}) }}" class="edit">Éditer</a>
+                <a href="{{ path('app_deleteBook', {'ref': b.ref}) }}" class="delete" 
+                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce livre ?');">Supprimer</a>
+                <a href="{{ path('app_detailBook', {'ref': b.ref}) }}" class="detail">Détails</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<!-- Statistiques -->
+<div class="stats">
+    <p>Nombre de livres publiés : {{ numPublishedBooks }}</p>
+    <p>Nombre de livres non publiés : {{ numUnPublishedBooks }}</p>
+</div>
+
+<!-- Formulaire de recherche de livre par référence -->
+<form method="get" action="{{ path('app_books_search') }}" style="text-align: center; margin-top: 20px;">
+    <input type="text" name="ref" placeholder="Entrez la référence du livre" required>
+    <button type="submit">Rechercher</button>
+</form>
+
+<!-- Résultat de la recherche -->
+{% if book is defined %}
+    {% if book %}
+        <h2>Résultat de la recherche</h2>
+        <p>{{ book.title }}</p>
+    {% else %}
+        <p>Aucun livre trouvé avec cette référence.</p>
+    {% endif %}
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Livres publiés entre deux dates{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1em;
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        table th, table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        table thead tr {
+            background-color: #3498db;
+            color: white;
+            text-align: left;
+        }
+
+        table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        table tbody tr:hover {
+            background-color: #ddd;
+        }
+
+        /* Styling for action links */
+        .action-links a {
+            color: #3498db;
+            text-decoration: none;
+            padding: 5px;
+        }
+
+        .action-links a:hover {
+            text-decoration: underline;
+            color: #2980b9;
+        }
+
+        .action-links a.delete {
+            color: #e74c3c;
+        }
+
+        .action-links a.delete:hover {
+            color: #c0392b;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <h1>Liste des livres publiés entre 2014 et 2018</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Date de publication</th>
+                <th>Catégorie</th>
+                <th>Auteur</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.publicationDate|date('Y-m-d') }}</td>
+                    <td>{{ book.category }}</td>
+                    <td>{{ book.author.username }}</td>
+                    <td class="action-links">
+                        <a href="{{ path('app_editBook', {'ref': book.ref}) }}">edit</a> |
+                        <a href="{{ path('app_deleteBook', {'ref': book.ref}) }}" onclick="return confirm('Are you sure?')" class="delete">delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

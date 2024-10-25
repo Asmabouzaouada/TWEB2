@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des auteurs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            color: #333;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            font-size: 16px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .actions {
+            text-align: center;
+        }
+        .actions a, .actions button {
+            margin-right: 10px;
+            text-decoration: none;
+            color: blue;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+        .actions a {
+            background-color: #007bff;
+            color: white;
+        }
+        .actions a:hover {
+            background-color: #0056b3;
+        }
+        .actions button {
+            border: 1px solid red;
+            background-color: white;
+            color: red;
+            cursor: pointer;
+        }
+        .actions button:hover {
+            background-color: red;
+            color: white;
+        }
+        .no-authors {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Liste des auteurs</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if authors is empty %}
+                <tr>
+                    <td colspan="3" class="no-authors">Aucun auteur trouvé.</td>
+                </tr>
+            {% else %}
+                {% for author in authors %}
+                    <tr>
+                        <td>{{ author.username }}</td>
+                        <td>{{ author.email }}</td>
+                        
+                        <td class="actions">
+                            <a href="{{ path('app_edit', {id: author.id}) }}">Éditer</a>
+                            <form action="{{ path('app_delete_author', {id: author.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet auteur ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ author.id) }}">
+                                <button type="submit">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if app.session.flashBag.has('success') %}
+    <div class="alert alert-success">
+        {% for message in app.session.flashBag.get('success') %}
+            {{ message }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+        </tbody>
+    </table>
+</body>
+</html>

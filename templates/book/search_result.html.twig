@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Résultat de la recherche{% endblock %}
+
+{% block body %}
+    <h1>Résultat de la recherche par référence</h1>
+
+    {% if book %}
+        <h2>{{ book.title }}</h2>
+        <p>Date de publication : {{ book.publicationDate | date('Y-m-d') }}</p>
+        <p>Auteur : {{ book.author.username }}</p>
+        <p>Catégorie : {{ book.category }}</p>
+        <p>Publié : {{ book.published ? 'Oui' : 'Non' }}</p>
+    {% else %}
+        <p>Aucun livre trouvé avec cette référence.</p>
+    {% endif %}
+
+    <a href="{{ path('app_AfficheBook') }}">Retour à la liste des livres</a>
+{% endblock %}
